@@ -1,5 +1,5 @@
 # PCUtils
-## A simple tool for playing gorilla tag on PC.
+### A simple tool for playing gorilla tag on PC.
 
 ## Controls
 - `Tab` - Toggles mod
