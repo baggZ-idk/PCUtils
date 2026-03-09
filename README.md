@@ -12,7 +12,7 @@
 - `S` - Move backwards 
 - `D` - Move right
 
-## Requirments
+## Requirements
 - [GorillaLibrary](https://github.com/GorillaTagModdingHub/GorillaLibrary/releases/download/latest/GorillaLibrary.dll)
 - [GorillaLibrary.GameModes](https://github.com/GorillaTagModdingHub/GorillaLibrary/releases/download/latest/GorillaLibrary.GameModes.dll)
 - [MelonLoader](https://github.com/LavaGang/MelonLoader/releases/latest)
