@@ -1,4 +1,4 @@
-# [PCUtils](https://github.com/baggZ-idk/PCUtils/releases/download/latest/PCUtils.dll)
+# PCUtils
 ### A simple tool for playing gorilla tag on PC.
 
 ## Controls
