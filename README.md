@@ -1,4 +1,4 @@
-# PCUtils
+# [PCUtils](https://github.com/baggZ-idk/PCUtils/releases/download/latest/PCUtils.dll)
 ### A simple tool for playing gorilla tag on PC.
 
 ## Controls
@@ -13,9 +13,9 @@
 - `D` - Move right
 
 ## Requirements
-- [GorillaLibrary](https://github.com/GorillaTagModdingHub/GorillaLibrary/releases/download/latest/GorillaLibrary.dll)
-- [GorillaLibrary.GameModes](https://github.com/GorillaTagModdingHub/GorillaLibrary/releases/download/latest/GorillaLibrary.GameModes.dll)
-- [MelonLoader](https://github.com/LavaGang/MelonLoader/releases/latest)
+- [GorillaLibrary](https://github.com/GorillaTagModdingHub/GorillaLibrary/releases/latest/)
+- [GorillaLibrary.GameModes](https://github.com/GorillaTagModdingHub/GorillaLibrary/releases/latest/)
+- [MelonLoader](https://github.com/LavaGang/MelonLoader/releases/latest/)
 
 ## Keeping you and the game safe
 The mod has a safeguard that forces the mod off if you join a non modded room. This is to stop you from getting banned and keeps the game safe.
