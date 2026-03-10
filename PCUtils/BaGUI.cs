@@ -21,7 +21,7 @@ namespace BaGUI
             Position = position;
         }
         
-        float SquareSlider(Rect rect, float value, float min, float max)
+        float Slider(Rect rect, float value, float min, float max)
         {
             float barHeight = 4f;
             Rect bar = new Rect(rect.x, rect.y + rect.height / 2 - barHeight / 2, rect.width, barHeight);
@@ -51,7 +51,7 @@ namespace BaGUI
             return Mathf.Clamp(value, min, max);
         }
         
-        bool SquareCheckbox(Rect rect, ref bool value, string label)
+        bool Checkbox(Rect rect, ref bool value, string label)
         {
             Rect box = new Rect(rect.x, rect.y + 4, 16, 16);
 
@@ -72,7 +72,7 @@ namespace BaGUI
             return false;
         }
         
-        bool SolidButton(Rect rect, string label, Color color)
+        bool Button(Rect rect, string label, Color color)
         {
             Color old = GUI.color;
 
@@ -175,14 +175,14 @@ namespace BaGUI
                     {
                         Rect btn = new Rect(Position.x + 5, y, Width - 10, 25);
 
-                        if (SolidButton(btn, item.Label, new Color(0.25f, 0.25f, 0.25f, 1f)))
+                        if (Button(btn, item.Label, new Color(0.25f, 0.25f, 0.25f, 1f)))
                             item.Action?.Invoke();
                         y += 30f;
                         break;
                     }
                     case PanelItemType.Checkbox:
                     {
-                        SquareCheckbox(new Rect(Position.x + 5, y, Width - 10, 25), ref item.BoolValue, item.Label);
+                        Checkbox(new Rect(Position.x + 5, y, Width - 10, 25), ref item.BoolValue, item.Label);
                         y += 30f;
                         break;
                     }
@@ -190,7 +190,7 @@ namespace BaGUI
                     {
                         GUI.Label(new Rect(Position.x + 5, y, Width - 10, 20),
                             item.Label + " : " + item.FloatValue.ToString("0.00"), bodyStyle);
-                        item.FloatValue = SquareSlider(
+                        item.FloatValue = Slider(
                             new Rect(Position.x + 5, y + 20, Width - 10, 20),
                             item.FloatValue,
                             item.Min,
@@ -202,7 +202,7 @@ namespace BaGUI
                     {
                         Rect btn = new Rect(Position.x + 5, y, Width - 10, 25);
 
-                        if (SolidButton(btn, item.Label + (item.Collapsed ? " [+]" : " [-]"),
+                        if (Button(btn, item.Label + (item.Collapsed ? " [+]" : " [-]"),
                                 new Color(0.2f, 0.2f, 0.2f, 1f)))
                             item.Collapsed = !item.Collapsed;
                         y += 30f;
@@ -225,14 +225,14 @@ namespace BaGUI
                                     {
                                         Rect subBtn = new Rect(Position.x + 15, y, Width - 20, 25);
 
-                                        if (SolidButton(subBtn, sub.Label, new Color(0.25f, 0.25f, 0.25f, 1f)))
+                                        if (Button(subBtn, sub.Label, new Color(0.25f, 0.25f, 0.25f, 1f)))
                                             sub.Action?.Invoke();
                                         y += 30f;
                                         break;
                                     }
                                     case PanelItemType.Checkbox:
                                     {
-                                        SquareCheckbox(new Rect(Position.x + 15, y, Width - 20, 25), ref sub.BoolValue, sub.Label);
+                                        Checkbox(new Rect(Position.x + 15, y, Width - 20, 25), ref sub.BoolValue, sub.Label);
                                         y += 30f;
                                         break;
                                     }
@@ -240,7 +240,7 @@ namespace BaGUI
                                     {
                                         GUI.Label(new Rect(Position.x + 15, y, Width - 20, 20),
                                             sub.Label + " : " + sub.FloatValue.ToString("0.00"), bodyStyle);
-                                        sub.FloatValue = SquareSlider(
+                                        sub.FloatValue = Slider(
                                             new Rect(Position.x + 15, y + 20, Width - 20, 20),
                                             sub.FloatValue,
                                             sub.Min,

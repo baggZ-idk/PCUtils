@@ -127,8 +127,7 @@ namespace PCUtils
 
                 helpSection.SubItems.Add(new PanelItem("Tab - Toggles mod", PanelItemType.Text));
                 helpSection.SubItems.Add(new PanelItem("Esc - Leaves the room", PanelItemType.Text));
-                helpSection.SubItems.Add(new PanelItem("C - Toggles first person", PanelItemType.Text));
-                helpSection.SubItems.Add(new PanelItem("H - Toggles help menu", PanelItemType.Text));
+                helpSection.SubItems.Add(new PanelItem("H - Toggles menu", PanelItemType.Text));
                 helpSection.SubItems.Add(new PanelItem("Right Click - Look around", PanelItemType.Text));
                 helpSection.SubItems.Add(new PanelItem("Left Click - Click buttons (most mods are incompatible with this feature)", PanelItemType.Text));
                 helpSection.SubItems.Add(new PanelItem("W - Move forwards", PanelItemType.Text));
