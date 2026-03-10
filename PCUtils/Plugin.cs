@@ -1,14 +1,8 @@
-﻿using Constants;
-using GorillaGameModes;
-using PCUtils;
+﻿using PCUtils;
 using MelonLoader;
 using UnityEngine;
-using GorillaLibrary.GameModes;
-using GorillaLibrary.GameModes.Models;
 using UnityEngine.InputSystem;
 using GorillaLocomotion;
-using GorillaNetworking;
-using Photon.Pun;
 
 [assembly: MelonInfo(typeof(Plugin), PCUtils.Constants.ModName, PCUtils.Constants.Version, PCUtils.Constants.ModAuthor)]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
@@ -36,16 +30,16 @@ namespace PCUtils
 
         public override void OnFixedUpdate()
         {
-            
-            if (Keyboard.current.tabKey.wasPressedThisFrame)
-                isActive = !isActive;
-            
-            if (Keyboard.current.escapeKey.wasPressedThisFrame && isActive)
-                NetworkSystem.Instance.ReturnToSinglePlayer();
 
-            string gameMode = NetworkSystem.Instance.InRoom ? GorillaLibrary.GameModes.Utilities.GameModeUtility.CurrentGamemode.ID : "Mod_";
+            if (Keyboard.current.tabKey.wasPressedThisFrame)
+            {
+                isActive = !isActive;
+                VRRig.LocalRig.head.trackingRotationOffset = Vector3.zero;
+            }
+
+            string gameMode = NetworkSystem.Instance.InRoom ? GorillaLibrary.GameModes.Utilities.GameModeUtility.CurrentGamemode.ID : GorillaLibrary.GameModes.Constants.ModdedPrefix;
             
-            if (!isActive || !gameMode.StartsWith("Mod_"))
+            if (!isActive || !gameMode.StartsWith(GorillaLibrary.GameModes.Constants.ModdedPrefix))
                 return;
             
             Transform head = GorillaTagger.Instance.headCollider.transform;
@@ -56,6 +50,8 @@ namespace PCUtils
                 Vector2 mouse = Mouse.current.delta.ReadValue();
                 head.Rotate(Vector3.up,    mouse.x  * 0.08f, Space.World);
                 head.Rotate(Vector3.right, -mouse.y * 0.08f, Space.Self);
+                
+                VRRig.LocalRig.head.rigTarget.transform.rotation = head.rotation;
 
                 Cursor.lockState = CursorLockMode.Locked;
             }
@@ -94,6 +90,9 @@ namespace PCUtils
             
             if (Keyboard.current.cKey.wasPressedThisFrame && isActive)
                 thirdPerson.gameObject.SetActive(!thirdPerson.gameObject.activeInHierarchy);
+            
+            if (Keyboard.current.escapeKey.wasPressedThisFrame && isActive)
+                NetworkSystem.Instance.ReturnToSinglePlayer();
         }
     }
 }
