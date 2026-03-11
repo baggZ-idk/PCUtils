@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using GorillaLocomotion;
 using BaGUI;
+using GorillaNetworking;
 
 [assembly: MelonInfo(typeof(Plugin), PCUtils.Constants.ModName, PCUtils.Constants.Version, PCUtils.Constants.ModAuthor)]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
@@ -16,6 +17,7 @@ namespace PCUtils
 
         public bool isActive = false;
         public bool helpMenu = false;
+        public bool noclipEnabled = false;
         
         private Panel utilsPanel;
         private PanelItem sensitivitySlider;
@@ -51,7 +53,16 @@ namespace PCUtils
             
             if (Keyboard.current.hKey.wasPressedThisFrame && isActive)
                 helpMenu = !helpMenu;
-            
+
+            if (isActive && Keyboard.current.altKey.wasPressedThisFrame)
+            {
+                noclipEnabled = !noclipEnabled;
+                
+                    MeshCollider[] array = Resources.FindObjectsOfTypeAll<MeshCollider>();
+                    for (int i = 0; i < array.Length; i++)
+                        array[i].enabled = !noclipEnabled;
+            }
+
             GorillaTagger.Instance.thirdPersonCamera.transform.GetChild(0).GetComponent<Camera>().gameObject.SetActive(!firstPersonToggle.BoolValue);
         }
 
@@ -128,6 +139,7 @@ namespace PCUtils
                 helpSection.SubItems.Add(new PanelItem("Tab - Toggles mod", PanelItemType.Text));
                 helpSection.SubItems.Add(new PanelItem("Esc - Leaves the room", PanelItemType.Text));
                 helpSection.SubItems.Add(new PanelItem("H - Toggles menu", PanelItemType.Text));
+                helpSection.SubItems.Add(new PanelItem("Alt - Toggles noclip", PanelItemType.Text));
                 helpSection.SubItems.Add(new PanelItem("Right Click - Look around", PanelItemType.Text));
                 helpSection.SubItems.Add(new PanelItem("Left Click - Click buttons (most mods are incompatible with this feature)", PanelItemType.Text));
                 helpSection.SubItems.Add(new PanelItem("W - Move forwards", PanelItemType.Text));
