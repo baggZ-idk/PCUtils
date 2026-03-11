@@ -4,7 +4,7 @@
 ## Controls
 - `Tab` - Toggles mod
 - `Esc` - Leaves the room
-- `C` - Toggles first person
+- `H` - Toggles the menu
 - `Right Click` - Look around
 - `Left Click` - Click buttons(most mods are be incompatible with this feature)
 - `W` - Move forwards
