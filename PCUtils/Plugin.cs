@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using GorillaLocomotion;
 using BaGUI;
-using GorillaNetworking;
+using Unity.Cinemachine;
 
 [assembly: MelonInfo(typeof(Plugin), PCUtils.Constants.ModName, PCUtils.Constants.Version, PCUtils.Constants.ModAuthor)]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
+
 namespace PCUtils
 {
     public class Plugin : MelonMod
@@ -18,10 +19,11 @@ namespace PCUtils
         public bool isActive = false;
         public bool helpMenu = false;
         public bool noclipEnabled = false;
-        
+
         private Panel utilsPanel;
-        private PanelItem sensitivitySlider;
-        private PanelItem firstPersonToggle;
+        private Slider sensitivitySlider;
+        private Slider fovSlider;
+        private Checkbox firstPersonToggle;
 
         public override void OnInitializeMelon()
         {
@@ -34,36 +36,60 @@ namespace PCUtils
                 .GetComponent<GorillaTriggerColliderHandIndicator>();
 
             coolLayers = 1 << 18;
+
+            utilsPanel = new Panel("PCUtils", new Vector2(20, 20));
+
+            var helpSection = utilsPanel.CreateSection("Help");
+            helpSection.AddLabel("Tab - Toggles mod");
+            helpSection.AddLabel("Esc - Leaves the room");
+            helpSection.AddLabel("H - Toggles menu");
+            helpSection.AddLabel("Alt - Toggles noclip");
+            helpSection.AddLabel("Right Click - Look around");
+            helpSection.AddLabel("Left Click - Click buttons (most mods are incompatible with this feature)");
+            helpSection.AddLabel("W - Move forwards");
+            helpSection.AddLabel("A - Move left");
+            helpSection.AddLabel("S - Move backwards");
+            helpSection.AddLabel("D - Move right");
+            helpSection.AddLabel("Shift - Sprint");
+
+            var settingsSection = utilsPanel.CreateSection("Settings");
+            sensitivitySlider = settingsSection.AddSlider("Sensitivity", 0f, 2f, 1f);
+            sensitivitySlider.OnValueChanged += val => { };
             
-            sensitivitySlider = new PanelItem("Sensitivity", 0f, 2f, 1f);
-            firstPersonToggle = new PanelItem("First Person", PanelItemType.Checkbox);
+            fovSlider = settingsSection.AddSlider("FOV", 30f, 120f, 60f);
+            fovSlider.OnValueChanged += val =>
+            {
+                GorillaTagger.Instance.thirdPersonCamera.transform.GetChild(0).transform.GetChild(0).GetComponent<CinemachineVirtualCamera>().m_Lens.FieldOfView = val;
+                GorillaTagger.Instance.mainCamera.transform.GetComponent<Camera>().fieldOfView = val;   
+            };
+
+            firstPersonToggle = settingsSection.AddCheckbox("First Person", false);
+            firstPersonToggle.OnValueChanged += val => { GorillaTagger.Instance.thirdPersonCamera.transform.GetChild(0).gameObject.SetActive(!val); };
         }
 
         public override void OnUpdate()
         {
             if (Keyboard.current.tabKey.wasPressedThisFrame)
                 isActive = !isActive;
-            
+
             string gameMode = NetworkSystem.Instance.InRoom
                 ? GorillaLibrary.GameModes.Utilities.GameModeUtility.CurrentGamemode.ID
                 : GorillaLibrary.GameModes.Constants.ModdedPrefix;
 
             if (!isActive || !gameMode.StartsWith(GorillaLibrary.GameModes.Constants.ModdedPrefix))
                 return;
-            
+
             if (Keyboard.current.hKey.wasPressedThisFrame && isActive)
                 helpMenu = !helpMenu;
 
             if (isActive && Keyboard.current.altKey.wasPressedThisFrame)
             {
                 noclipEnabled = !noclipEnabled;
-                
-                    MeshCollider[] array = Resources.FindObjectsOfTypeAll<MeshCollider>();
-                    for (int i = 0; i < array.Length; i++)
-                        array[i].enabled = !noclipEnabled;
-            }
 
-            GorillaTagger.Instance.thirdPersonCamera.transform.GetChild(0).GetComponent<Camera>().gameObject.SetActive(!firstPersonToggle.BoolValue);
+                MeshCollider[] array = Resources.FindObjectsOfTypeAll<MeshCollider>();
+                for (int i = 0; i < array.Length; i++)
+                    array[i].enabled = !noclipEnabled;
+            }
         }
 
         public override void OnFixedUpdate()
@@ -80,17 +106,14 @@ namespace PCUtils
             if (Mouse.current.rightButton.isPressed)
             {
                 Vector2 mouse = Mouse.current.delta.ReadValue();
-                head.Rotate(Vector3.up, mouse.x * 0.08f  * sensitivitySlider.FloatValue, Space.World);
-                head.Rotate(Vector3.right, -mouse.y * 0.08f  * sensitivitySlider.FloatValue, Space.Self);
+                head.Rotate(Vector3.up, mouse.x * 0.08f * sensitivitySlider.Value, Space.World);
+                head.Rotate(Vector3.right, -mouse.y * 0.08f * sensitivitySlider.Value, Space.Self);
 
                 VRRig.LocalRig.head.rigTarget.transform.rotation = head.rotation;
-
                 Cursor.lockState = CursorLockMode.Locked;
             }
             else
-            {
                 Cursor.lockState = CursorLockMode.None;
-            }
 
             Vector3 direction = Vector3.zero;
 
@@ -102,7 +125,6 @@ namespace PCUtils
             if (Keyboard.current.leftCtrlKey.isPressed) direction -= head.up;
 
             Rigidbody playerRB = GorillaTagger.Instance.rigidbody;
-
             playerRB.transform.position += direction.normalized * Time.fixedDeltaTime *
                                            (Keyboard.current.leftShiftKey.isPressed ? 30f : 10f);
             playerRB.linearVelocity = Vector3.zero;
@@ -129,35 +151,6 @@ namespace PCUtils
         {
             if (!helpMenu || !isActive)
                 return;
-
-            if (utilsPanel == null)
-            {
-                utilsPanel = new Panel("PCUtils", new Vector2(20, 20));
-                
-                var helpSection = new PanelItem("Help", PanelItemType.Section);
-
-                helpSection.SubItems.Add(new PanelItem("Tab - Toggles mod", PanelItemType.Text));
-                helpSection.SubItems.Add(new PanelItem("Esc - Leaves the room", PanelItemType.Text));
-                helpSection.SubItems.Add(new PanelItem("H - Toggles menu", PanelItemType.Text));
-                helpSection.SubItems.Add(new PanelItem("Alt - Toggles noclip", PanelItemType.Text));
-                helpSection.SubItems.Add(new PanelItem("Right Click - Look around", PanelItemType.Text));
-                helpSection.SubItems.Add(new PanelItem("Left Click - Click buttons (most mods are incompatible with this feature)", PanelItemType.Text));
-                helpSection.SubItems.Add(new PanelItem("W - Move forwards", PanelItemType.Text));
-                helpSection.SubItems.Add(new PanelItem("A - Move left", PanelItemType.Text));
-                helpSection.SubItems.Add(new PanelItem("S - Move backwards", PanelItemType.Text));
-                helpSection.SubItems.Add(new PanelItem("D - Move right", PanelItemType.Text));
-                helpSection.SubItems.Add(new PanelItem("Shift - Sprint", PanelItemType.Text));
-                
-                utilsPanel.Items.Add(helpSection);
-                
-                
-                var settingsSection = new PanelItem("Settings", PanelItemType.Section);
-                
-                settingsSection.SubItems.Add(sensitivitySlider);
-                settingsSection.SubItems.Add(firstPersonToggle);
-                
-                utilsPanel.Items.Add(settingsSection);
-            }
 
             utilsPanel.Draw();
         }
