@@ -23,6 +23,7 @@ namespace PCUtils
         private Panel utilsPanel;
         private Slider sensitivitySlider;
         private Slider fovSlider;
+        private Slider speedSlider;
         private Checkbox firstPersonToggle;
 
         public override void OnInitializeMelon()
@@ -62,6 +63,8 @@ namespace PCUtils
                 GorillaTagger.Instance.thirdPersonCamera.transform.GetChild(0).transform.GetChild(0).GetComponent<CinemachineVirtualCamera>().m_Lens.FieldOfView = val;
                 GorillaTagger.Instance.mainCamera.transform.GetComponent<Camera>().fieldOfView = val;   
             };
+            
+            speedSlider = settingsSection.AddSlider("Speed", 1f,  20f, 10f);
 
             firstPersonToggle = settingsSection.AddCheckbox("First Person", false);
             firstPersonToggle.OnValueChanged += val => { GorillaTagger.Instance.thirdPersonCamera.transform.GetChild(0).gameObject.SetActive(!val); };
@@ -74,9 +77,9 @@ namespace PCUtils
 
             string gameMode = NetworkSystem.Instance.InRoom
                 ? GorillaLibrary.GameModes.Utilities.GameModeUtility.CurrentGamemode.ID
-                : GorillaLibrary.GameModes.Constants.ModdedPrefix;
+                : "MODDED_";
 
-            if (!isActive || !gameMode.StartsWith(GorillaLibrary.GameModes.Constants.ModdedPrefix))
+            if (!isActive || !gameMode.StartsWith("MODDED_"))
                 return;
 
             if (Keyboard.current.hKey.wasPressedThisFrame && isActive)
@@ -125,8 +128,7 @@ namespace PCUtils
             if (Keyboard.current.leftCtrlKey.isPressed) direction -= head.up;
 
             Rigidbody playerRB = GorillaTagger.Instance.rigidbody;
-            playerRB.transform.position += direction.normalized * Time.fixedDeltaTime *
-                                           (Keyboard.current.leftShiftKey.isPressed ? 30f : 10f);
+            playerRB.transform.position += direction.normalized * Time.fixedDeltaTime * (Keyboard.current.leftShiftKey.isPressed ? 3f : 1f) * speedSlider.Value;
             playerRB.linearVelocity = Vector3.zero;
             playerRB.AddForce(-Physics.gravity * playerRB.mass);
 
