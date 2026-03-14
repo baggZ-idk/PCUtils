@@ -11,6 +11,8 @@ namespace BaGUI
         public static Color ButtonColor = new Color(0.25f, 0.25f, 0.25f, 1f);
         public static Color SectionButton = new Color(0.2f, 0.2f, 0.2f, 1f);
         public static Color TextColor = Color.white;
+        public static Color InputColor = new Color(0.2f, 0.2f, 0.2f, 1f);
+        
         public static int FontSizeHeader = 18;
         public static int FontSizeBody = 14;
         public static int FontSizeButton = 14;
@@ -87,7 +89,7 @@ namespace BaGUI
         {
             float barHeight = 4f;
             Rect bar = new Rect(rect.x, rect.y + rect.height / 2 - barHeight / 2, rect.width, barHeight);
-            GUI.color = new Color(0.3f, 0.3f, 0.3f, 1f);
+            GUI.color = BaGUISettings.InputColor;
             GUI.DrawTexture(bar, Texture2D.whiteTexture);
 
             float t = (value - min) / (max - min);
@@ -146,6 +148,28 @@ namespace BaGUI
 
             return Event.current.type == EventType.MouseDown && rect.Contains(Event.current.mousePosition);
         }
+
+        public string TextField(Rect rect, string value)
+        {
+            Color old = GUI.color;
+            GUI.color = BaGUISettings.InputColor;
+            GUI.DrawTexture(rect, Texture2D.whiteTexture);
+            GUI.color = old;
+
+            GUIStyle style = new GUIStyle(GUI.skin.textField);
+            style.normal.background = null;
+            style.hover.background = null;
+            style.active.background = null;
+            style.focused.background = null;
+            style.onNormal.background = null;
+            style.onHover.background = null;
+            style.onActive.background = null;
+            style.onFocused.background = null;
+            style.normal.textColor = BaGUISettings.TextColor;
+            style.padding = new RectOffset(4, 4, 2, 2);
+
+            return GUI.TextField(rect, value, style);
+        }
     }
 
     public abstract class UIElement
@@ -176,6 +200,13 @@ namespace BaGUI
             Elements.Add(new Label(Parent, text));
         }
 
+        public Button AddButton(string label, Action onClick)
+        {
+            var button = new Button(Parent, label, onClick);
+            Elements.Add(button);
+            return button;
+        }
+
         public Slider AddSlider(string label, float min, float max, float defaultValue)
         {
             var slider = new Slider(Parent, label, min, max, defaultValue);
@@ -188,6 +219,13 @@ namespace BaGUI
             var checkbox = new Checkbox(Parent, label, defaultValue);
             Elements.Add(checkbox);
             return checkbox;
+        }
+
+        public TextInput AddTextInput(string label, string defaultValue)
+        {
+            var input = new TextInput(Parent, label, defaultValue);
+            Elements.Add(input);
+            return input;
         }
 
         public override float Draw(float y, float parentIndent)
@@ -276,6 +314,29 @@ namespace BaGUI
         public override float GetHeight(float parentIndent) => 30f;
     }
 
+    public class TextInput : UIElement
+    {
+        public string Value;
+        public Action<string> OnValueChanged;
+
+        public TextInput(Panel parent, string label, string def) : base(parent, label)
+        {
+            Value = def;
+        }
+
+        public override float Draw(float y, float parentIndent)
+        {
+            GUI.Label(new Rect(Parent.Position.x + 5 + parentIndent, y, Parent.Width - 10 - parentIndent, 20), Label);
+            string old = Value;
+            Value = Parent.TextField(new Rect(Parent.Position.x + 5 + parentIndent, y + 20, Parent.Width - 10 - parentIndent, 22), Value);
+            if (old != Value)
+                OnValueChanged?.Invoke(Value);
+            return 50f;
+        }
+
+        public override float GetHeight(float parentIndent) => 50f;
+    }
+
     public class Button : UIElement
     {
         public Action OnClick;
@@ -322,5 +383,7 @@ namespace BaGUI
         public static Button CreateButton(Panel parent, string name, Action onClick) => new Button(parent, name, onClick);
         public static Label CreateLabel(Panel parent, string text) => new Label(parent, text);
         public static Section CreateSection(Panel parent, string name) => new Section(parent, name);
+        
+        public static TextInput CreateTextInput(Panel parent, string name, string def) => new TextInput(parent, name, def);
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using GorillaLocomotion;
 using BaGUI;
+using GorillaNetworking;
 using Unity.Cinemachine;
 
 [assembly: MelonInfo(typeof(Plugin), PCUtils.Constants.ModName, PCUtils.Constants.Version, PCUtils.Constants.ModAuthor)]
@@ -22,9 +23,9 @@ namespace PCUtils
 
         private Panel utilsPanel;
         private Slider sensitivitySlider;
-        private Slider fovSlider;
         private Slider speedSlider;
-        private Checkbox firstPersonToggle;
+        private TextInput roomCode;
+        private TextInput userName;
 
         public override void OnInitializeMelon()
         {
@@ -53,11 +54,12 @@ namespace PCUtils
             helpSection.AddLabel("D - Move right");
             helpSection.AddLabel("Shift - Sprint");
 
+            
             var settingsSection = utilsPanel.CreateSection("Settings");
             sensitivitySlider = settingsSection.AddSlider("Sensitivity", 0f, 2f, 1f);
             sensitivitySlider.OnValueChanged += val => { };
             
-            fovSlider = settingsSection.AddSlider("FOV", 30f, 120f, 60f);
+            Slider fovSlider = settingsSection.AddSlider("FOV", 30f, 120f, 60f);
             fovSlider.OnValueChanged += val =>
             {
                 GorillaTagger.Instance.thirdPersonCamera.transform.GetChild(0).transform.GetChild(0).GetComponent<CinemachineVirtualCamera>().m_Lens.FieldOfView = val;
@@ -66,8 +68,18 @@ namespace PCUtils
             
             speedSlider = settingsSection.AddSlider("Speed", 1f,  20f, 10f);
 
-            firstPersonToggle = settingsSection.AddCheckbox("First Person", false);
+            Checkbox firstPersonToggle = settingsSection.AddCheckbox("First Person", false);
             firstPersonToggle.OnValueChanged += val => { GorillaTagger.Instance.thirdPersonCamera.transform.GetChild(0).gameObject.SetActive(!val); };
+            
+            
+            var gameSection = utilsPanel.CreateSection("Game");
+            
+            gameSection.AddButton("Disconnect", () => { NetworkSystem.Instance.ReturnToSinglePlayer(); });
+
+            roomCode = gameSection.AddTextInput("Room Code", "");
+            Button joinRoom = gameSection.AddButton("Join Room", 
+                () => { PhotonNetworkController.Instance.AttemptToAutoJoinSpecificRoom(roomCode.Value, JoinType.Solo); });
+
         }
 
         public override void OnUpdate()
