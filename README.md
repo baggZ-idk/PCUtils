@@ -15,7 +15,7 @@
 ## Requirements
 - [GorillaLibrary](https://github.com/GorillaTagModdingHub/GorillaLibrary/releases/latest/)
 - [GorillaLibrary.GameModes](https://github.com/GorillaTagModdingHub/GorillaLibrary/releases/latest/)
-- [MelonLoader](https://github.com/LavaGang/MelonLoader/releases/latest/)
+- [MelonLoader](https://github.com/LavaGang/MelonLoader/releases/latest/) OR [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest)
 
 ## Keeping you and the game safe
 The mod has a safeguard that forces the mod off if you join a non modded room. This is to stop you from getting banned and keeps the game safe.
