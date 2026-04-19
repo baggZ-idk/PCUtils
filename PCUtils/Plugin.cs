@@ -6,13 +6,36 @@ using GorillaLocomotion;
 using BaGUI;
 using GorillaNetworking;
 using Unity.Cinemachine;
+using BepInEx;
 
-[assembly: MelonInfo(typeof(Plugin), PCUtils.Constants.ModName, PCUtils.Constants.Version, PCUtils.Constants.ModAuthor)]
+[assembly: MelonInfo(typeof(PCUtils.MelonLoader), PCUtils.Constants.ModName, PCUtils.Constants.Version, PCUtils.Constants.ModAuthor)]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
 
 namespace PCUtils
 {
-    public class Plugin : MelonMod
+    
+    [BepInPlugin(Constants.GUID, Constants.ModName, Constants.Version)]
+    public class BelInEx : BaseUnityPlugin
+    {
+        private Shared shared = new Shared();   
+
+        void Start() => shared.Init();
+        void Update() => shared.Update();
+        void FixedUpdate() => shared.FixedUpdate();
+        void OnGUI() => shared.OnGUI();
+    }
+
+    public class MelonLoader : MelonMod
+    {
+        private Shared shared = new Shared();
+
+        public override void OnInitializeMelon() => shared.Init();
+        public override void OnUpdate() => shared.Update();
+        public override void OnFixedUpdate() =>  shared.FixedUpdate();
+        public override void OnGUI() => shared.OnGUI();
+    }
+    
+    public class Shared
     {
         private LayerMask coolLayers;
         private GorillaTriggerColliderHandIndicator clickyCollider;
@@ -27,7 +50,7 @@ namespace PCUtils
         private TextInput roomCode;
         private TextInput userName;
 
-        public override void OnInitializeMelon()
+        public void Init()
         {
             GorillaTagger.OnPlayerSpawned(OnPlayerSpawn);
         }
@@ -82,7 +105,7 @@ namespace PCUtils
 
         }
 
-        public override void OnUpdate()
+        public void Update()
         {
             if (Keyboard.current.tabKey.wasPressedThisFrame)
                 isActive = !isActive;
@@ -107,13 +130,13 @@ namespace PCUtils
             }
         }
 
-        public override void OnFixedUpdate()
+        public void FixedUpdate()
         {
             string gameMode = NetworkSystem.Instance.InRoom
                 ? GorillaLibrary.GameModes.Utilities.GameModeUtility.CurrentGamemode.ID
-                : GorillaLibrary.GameModes.Constants.ModdedPrefix;
+                : "MODDED_";
 
-            if (!isActive || !gameMode.StartsWith(GorillaLibrary.GameModes.Constants.ModdedPrefix))
+            if (!isActive || !gameMode.StartsWith("MODDED_"))
                 return;
 
             Transform head = GorillaTagger.Instance.headCollider.transform;
@@ -161,7 +184,7 @@ namespace PCUtils
                 NetworkSystem.Instance.ReturnToSinglePlayer();
         }
 
-        public override void OnGUI()
+        public void OnGUI()
         {
             if (!helpMenu || !isActive)
                 return;
