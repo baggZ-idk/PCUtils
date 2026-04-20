@@ -111,7 +111,7 @@ namespace PCUtils
                 isActive = !isActive;
 
             string gameMode = NetworkSystem.Instance.InRoom
-                ? GorillaLibrary.GameModes.Utilities.GameModeUtility.CurrentGamemode.ID
+                ? NetworkSystem.Instance.GameModeString
                 : "MODDED_";
 
             if (!isActive || !gameMode.StartsWith("MODDED_"))
