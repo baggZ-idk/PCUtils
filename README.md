@@ -13,8 +13,7 @@
 - `D` - Move right
 
 ## Requirements
-- [GorillaLibrary](https://github.com/GorillaTagModdingHub/GorillaLibrary/releases/latest/)
-- [GorillaLibrary.GameModes](https://github.com/GorillaTagModdingHub/GorillaLibrary/releases/latest/) OR [Utilla](https://github.com/sirkingbinx/Utilla/releases/latest)
+- [GorillaLibrary](https://github.com/GorillaTagModdingHub/GorillaLibrary/releases/latest/) OR [Utilla](https://github.com/sirkingbinx/Utilla/releases/latest)
 - [MelonLoader](https://github.com/LavaGang/MelonLoader/releases/latest/) OR [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest)
 
 ## Keeping you and the game safe
