@@ -11,6 +11,9 @@
 - `A` - Move left
 - `S` - Move backwards 
 - `D` - Move right
+- `Space` - Move Up
+- `CTRL` - Move Down
+- `Alt` - Toggle No-Clip
 
 ## Requirements
 - [GorillaLibrary](https://github.com/GorillaTagModdingHub/GorillaLibrary/releases/latest/) OR [Utilla](https://github.com/sirkingbinx/Utilla/releases/latest)
