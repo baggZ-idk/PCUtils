@@ -108,18 +108,29 @@ namespace PCUtils
         public void Update()
         {
             if (Keyboard.current.tabKey.wasPressedThisFrame)
+            {
+                
                 isActive = !isActive;
+            }
 
-            string gameMode = NetworkSystem.Instance.InRoom
-                ? NetworkSystem.Instance.GameModeString
-                : "MODDED_";
-
-            if (!isActive || !gameMode.StartsWith("MODDED_"))
+            if (!isActive || !(NetworkSystem.Instance.InRoom ? NetworkSystem.Instance.GameModeString : "MODDED_").StartsWith("MODDED_"))
+            {
+                if (noclipEnabled)
+                {
+                    noclipEnabled = false;
+                    MeshCollider[] array = Resources.FindObjectsOfTypeAll<MeshCollider>();
+                    for (int i = 0; i < array.Length; i++)
+                        array[i].enabled = true;
+                }
+                    
                 return;
+            }
+                
 
             if (Keyboard.current.hKey.wasPressedThisFrame && isActive)
                 helpMenu = !helpMenu;
-
+            
+            //I couldn't be bothered to make this work better lol
             if (isActive && Keyboard.current.altKey.wasPressedThisFrame)
             {
                 noclipEnabled = !noclipEnabled;
@@ -132,11 +143,7 @@ namespace PCUtils
 
         public void FixedUpdate()
         {
-            string gameMode = NetworkSystem.Instance.InRoom
-                ? GorillaLibrary.GameModes.Utilities.GameModeUtility.CurrentGamemode.ID
-                : "MODDED_";
-
-            if (!isActive || !gameMode.StartsWith("MODDED_"))
+            if (!isActive || !(NetworkSystem.Instance.InRoom ? NetworkSystem.Instance.GameModeString : "MODDED_").StartsWith("MODDED_"))
                 return;
 
             Transform head = GorillaTagger.Instance.headCollider.transform;
@@ -165,7 +172,6 @@ namespace PCUtils
             Rigidbody playerRB = GorillaTagger.Instance.rigidbody;
             playerRB.transform.position += direction.normalized * Time.fixedDeltaTime * (Keyboard.current.leftShiftKey.isPressed ? 3f : 1f) * speedSlider.Value;
             playerRB.linearVelocity = Vector3.zero;
-            playerRB.AddForce(-Physics.gravity * playerRB.mass);
 
             Camera thirdPerson = GorillaTagger.Instance.thirdPersonCamera.transform.GetChild(0).GetComponent<Camera>();
 
