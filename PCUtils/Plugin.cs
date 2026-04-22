@@ -113,7 +113,7 @@ namespace PCUtils
                 isActive = !isActive;
             }
 
-            if (!isActive || !(NetworkSystem.Instance.InRoom ? NetworkSystem.Instance.GameModeString : "MODDED_").StartsWith("MODDED_"))
+            if (!isActive || !(NetworkSystem.Instance.InRoom ? NetworkSystem.Instance.GameModeString : "MODDED_").Contains("MODDED_"))
             {
                 if (noclipEnabled)
                 {
@@ -143,7 +143,7 @@ namespace PCUtils
 
         public void FixedUpdate()
         {
-            if (!isActive || !(NetworkSystem.Instance.InRoom ? NetworkSystem.Instance.GameModeString : "MODDED_").StartsWith("MODDED_"))
+            if (!isActive || !(NetworkSystem.Instance.InRoom ? NetworkSystem.Instance.GameModeString : "MODDED_").Contains("MODDED_"))
                 return;
 
             Transform head = GorillaTagger.Instance.headCollider.transform;
