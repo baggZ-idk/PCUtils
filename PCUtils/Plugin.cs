@@ -43,6 +43,7 @@ namespace PCUtils
         public bool isActive = false;
         public bool helpMenu = false;
         public bool noclipEnabled = false;
+        private bool uiInitialized;
 
         private Panel utilsPanel;
         private Slider sensitivitySlider;
@@ -57,6 +58,9 @@ namespace PCUtils
 
         public void OnPlayerSpawn()
         {
+            if (uiInitialized) return;
+            uiInitialized = true;
+            
             clickyCollider = GorillaTagger.Instance.rightHandTriggerCollider
                 .GetComponent<GorillaTriggerColliderHandIndicator>();
 
@@ -113,7 +117,7 @@ namespace PCUtils
                 isActive = !isActive;
             }
 
-            if (!isActive || !(NetworkSystem.Instance.InRoom ? NetworkSystem.Instance.GameModeString : "MODDED_").StartsWith("MODDED_"))
+            if (!isActive || !(NetworkSystem.Instance.InRoom ? NetworkSystem.Instance.GameModeString : "MODDED_").Contains("MODDED_"))
             {
                 if (noclipEnabled)
                 {
@@ -143,7 +147,7 @@ namespace PCUtils
 
         public void FixedUpdate()
         {
-            if (!isActive || !(NetworkSystem.Instance.InRoom ? NetworkSystem.Instance.GameModeString : "MODDED_").StartsWith("MODDED_"))
+            if (!isActive || !(NetworkSystem.Instance.InRoom ? NetworkSystem.Instance.GameModeString : "MODDED_").Contains("MODDED_"))
                 return;
 
             Transform head = GorillaTagger.Instance.headCollider.transform;
@@ -172,6 +176,7 @@ namespace PCUtils
             Rigidbody playerRB = GorillaTagger.Instance.rigidbody;
             playerRB.transform.position += direction.normalized * Time.fixedDeltaTime * (Keyboard.current.leftShiftKey.isPressed ? 3f : 1f) * speedSlider.Value;
             playerRB.linearVelocity = Vector3.zero;
+            playerRB.AddForce(-Physics.gravity * playerRB.mass);
 
             Camera thirdPerson = GorillaTagger.Instance.thirdPersonCamera.transform.GetChild(0).GetComponent<Camera>();
 
